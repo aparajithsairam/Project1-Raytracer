@@ -105,26 +105,31 @@ void runCuda(){
   // Map OpenGL buffer object for writing from CUDA on a single GPU
   // No data is moved (Win & Linux). When mapped to CUDA, OpenGL should not use this buffer
   
-  if(iterations<renderCam->iterations){
+  if((unsigned int)iterations < renderCam->iterations){
     uchar4 *dptr=NULL;
     ++iterations;
     cudaGLMapBufferObject((void**)&dptr, pbo);
   
     //pack geom and material arrays
-	unsigned int objectsSize = renderScene->objects.size(), materialsSize = renderScene->materials.size();
+	unsigned int objectsSize = renderScene->objects.size(), materialsSize = renderScene->materials.size(), lightsSize = renderScene->lights.size();
     geom* geoms = new geom[objectsSize];
     material* materials = new material[materialsSize];
+	light* lights = new light[lightsSize];
+
     
-    for(int i=0; i< objectsSize; ++i){
+    for(unsigned int i=0; i< objectsSize; ++i){
       geoms[i] = renderScene->objects[i];
     }
-    for(int i=0; i< materialsSize; ++i){
+    for(unsigned int i=0; i< materialsSize; ++i){
       materials[i] = renderScene->materials[i];
+    }
+	for(unsigned int i=0; i< lightsSize; ++i){
+      lights[i] = renderScene->lights[i];
     }
     
   
     // execute the kernel
-    cudaRaytraceCore(dptr, renderCam, targetFrame, iterations, materials, materialsSize, geoms, objectsSize);
+    cudaRaytraceCore(dptr, renderCam, targetFrame, iterations, materials, materialsSize, geoms, objectsSize, lights, lightsSize);
     
     // unmap buffer object
     cudaGLUnmapBufferObject(pbo);
