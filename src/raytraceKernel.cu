@@ -215,7 +215,7 @@ __global__ void raytraceRay(ray *rays, float time, cameraData cam, int rayDepth,
 				float KD = 0.8f;
 				colors[index] += KD * lights[i].color * materials[geoms[geomIndex].materialid].color * glm::dot(lightRay.direction, normal);
 				//Phong Shading
-				float KS = 0.1f;
+				float KS = 0.10f;
 				glm::vec3 reflectedRay = calculateReflectionDirection(normal, rt.direction);
 				glm::vec3 V = glm::normalize((cam.position - intersectionPoint));
 				colors[index] += (KS * materials[geoms[geomIndex].materialid].specularColor * lights[i].color * pow((float)glm::dot(reflectedRay, V),
@@ -223,15 +223,42 @@ __global__ void raytraceRay(ray *rays, float time, cameraData cam, int rayDepth,
 				//Reflection
 				if(materials[geoms[geomIndex].materialid].hasReflective == 1.0f)
 				{
-					rays[rayIndex].origin = intersectionPoint;
+					rays[rayIndex].origin = intersectionPoint + reflectedRay * 0.01f;
 					rays[rayIndex].direction = reflectedRay;
+				}
+				//Refraction
+				else if(materials[geoms[geomIndex].materialid].hasRefractive == 1.0f)
+				{
+
 				}
 				else
 				{
 					rays[rayIndex].origin = glm::vec3(-10000, -10000, -10000);
 				}
 			}
+			//Coloring due to reflection
+			else if(materials[geoms[geomIndex].materialid].hasReflective == 1.0f)
+			{
+				glm::vec3 reflectedRay = calculateReflectionDirection(normal, rt.direction);
+				rays[rayIndex].origin = intersectionPoint + reflectedRay * 0.01f;
+				rays[rayIndex].direction = reflectedRay;
+			}
+			//Coloring due to refraction
+			else if(materials[geoms[geomIndex].materialid].hasRefractive == 1.0f)
+			{
+
+			}
+			//Ambient Lighting
+			float KA = 0.1f;
+			glm::vec3 ambientLight(0.2f, 0.2f, 0.2f);
+			colors[index] += KA * materials[geoms[geomIndex].materialid].color * ambientLight;
 		}
+	}
+	//Background
+	else
+	{
+		glm::vec3 backRGB(0, 0, 0);
+		colors[index] = backRGB;
 	}
   }
   //__syncthreads();

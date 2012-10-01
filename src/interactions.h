@@ -89,18 +89,23 @@ __host__ __device__ glm::vec3 calculateRandomDirectionInHemisphere(glm::vec3 nor
 //TODO: IMPLEMENT THIS FUNCTION
 //Now that you know how cosine weighted direction generation works, try implementing non-cosine (uniform) weighted random direction generation. 
 //This should be much easier than if you had to implement calculateRandomDirectionInHemisphere.
-__host__ __device__ glm::vec3 getRandomDirectionInSphere(float xi1, float xi2) {
-  return glm::vec3(0,0,0);
+__host__ __device__ glm::vec3 getRandomDirectionInSphere(float xi1, float xi2)
+{
+	//float x = 2.0f * cos(TWO_PI * xi1) * sqrt(xi2 * (1.0f - xi2));
+	//float y = 2.0f * sin(TWO_PI * xi1) * sqrt(xi2 * (1.0f - xi2));
+	//float z = 1.0f - 2.0f * xi2;
+	return glm::normalize(glm::vec3((2.0f * cos(TWO_PI * xi1) * sqrt(xi2 * (1.0f - xi2)), 2.0f * sin(TWO_PI * xi1) * sqrt(xi2 * (1.0f - xi2)), 1.0f - 2.0f * xi2)));
 }
 
 //TODO (PARTIALLY OPTIONAL): IMPLEMENT THIS FUNCTION
 //returns 0 if diffuse scatter, 1 if reflected, 2 if transmitted.
 __host__ __device__ int calculateBSDF(ray& r, glm::vec3 intersect, glm::vec3 normal, glm::vec3 emittedColor, 
                                        AbsorptionAndScatteringProperties& currentAbsorptionAndScattering, 
-                                       glm::vec3& color, glm::vec3& unabsorbedColor, material m){
+                                       glm::vec3& color, glm::vec3& unabsorbedColor, material m)
+{
 
-  return 1;
-};
+	return 1;
+}
 
 #endif
     

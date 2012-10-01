@@ -49,7 +49,7 @@ int main(int argc, char** argv){
 
   // Set up camera stuff from loaded pathtracer settings
   iterations = 0;
-  renderCam = &renderScene->renderCam;
+  renderCam = &(renderScene->renderCam);
   width = renderCam->resolution[0];
   height = renderCam->resolution[1];
 
@@ -166,7 +166,7 @@ void runCuda(){
         exit(0);
       }
     }
-    if(targetFrame<renderCam->frames-1){
+    if(targetFrame < renderCam->frames - 1){
 
       //clear image buffer and move onto next frame
       ++targetFrame;
@@ -229,9 +229,32 @@ void runCuda(){
 		std::cout << key << std::endl;
 		switch (key) 
 		{
-		   case(27):
-			   exit(1);
-			   break;
+		case 'd':
+			//renderScene->renderCam.positions[0].x -= 1.0f;
+			renderCam[0].positions[0].x += 1.0f;
+			/*for(int i = 0; i <= renderCam->frames; ++i)
+			{
+				renderScene->renderCam.positions[0].x -= 1.0f;
+			}*/
+			break;
+		case 'a':
+			renderCam[0].positions[0].x -= 1.0f;
+			break;
+		case 'w':
+			renderCam[0].positions[0].z -= 1.0f;
+			break;
+		case 's':
+			renderCam[0].positions[0].z += 1.0f;
+			break;
+		case 'r':
+			renderCam[0].positions[0].y += 1.0f;
+			break;
+		case 'f':
+			renderCam[0].positions[0].y -= 1.0f;
+			break;
+		case(27):
+			exit(1);
+			break;
 		}
 	}
 
